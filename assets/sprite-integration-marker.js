@@ -1,1 +1,0 @@
-// Caos Total sprite integration assets are stored alongside this file.
