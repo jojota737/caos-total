@@ -1,7 +1,7 @@
 const firebaseConfig={apiKey:"AIzaSyBZJLzRyUWevDvZYfIvS5BZpNGZAgtmK20",authDomain:"projetocd-6088c.firebaseapp.com",projectId:"projetocd-6088c",storageBucket:"projetocd-6088c.firebasestorage.app",messagingSenderId:"1010083786054",appId:"1:1010083786054:web:eb5e715c7d3c9966148947",measurementId:"G-206XSBFXKZ"};
 if(!firebase.apps.length)firebase.initializeApp(firebaseConfig);
 const db=firebase.firestore(),$=id=>document.getElementById(id);
-let roomRef=null,playersRef=null,myId=localStorage.getItem("ct_player_id")||("p_"+Math.random().toString(36).slice(2)+Date.now().toString(36)),myName="",currentRoom="",players=[],bullets=[],started=false,endsAt=0,round=0,axis={x:0,y:0},unRoom=null,unPlayers=null,unBullets=null,hostTimer=null,lastTick=0;
+let roomRef=null,playersRef=null,bulletsRef=null,myId=localStorage.getItem("ct_player_id")||("p_"+Math.random().toString(36).slice(2)+Date.now().toString(36)),myName="",currentRoom="",players=[],bullets=[],started=false,endsAt=0,round=0,axis={x:0,y:0},unRoom=null,unPlayers=null,unBullets=null,hostTimer=null,lastTick=0;
 localStorage.setItem("ct_player_id",myId);
 const canvas=$("arena"),ctx=canvas.getContext("2d"),W=900,H=600,COLORS=["#8bff65","#63d9ff","#ffcf5c","#ff6b9a","#b58cff"],TICK=100;
 function err(t){$("status").textContent=t||""}function me(){return players.find(p=>p.id===myId)}function cleanName(){return ($("name").value.trim()||"Jogador").slice(0,16)}function newCode(){return Math.random().toString(36).slice(2,6).toUpperCase()}
