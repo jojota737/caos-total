@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="256" viewBox="0 0 512 256" shape-rendering="crispEdges">
+<defs>
+ <linearGradient id="p" x2="0" y2="1"><stop stop-color="#4d2677"/><stop offset="1" stop-color="#21143e"/></linearGradient>
+ <linearGradient id="g" x2="0" y2="1"><stop stop-color="#9bff55"/><stop offset="1" stop-color="#328c45"/></linearGradient>
+ <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse"><rect width="32" height="32" fill="#211b3d"/><path d="M0 0H32V32H0Z" fill="none" stroke="#39285b" stroke-width="2"/><path d="M4 4H28V28H4Z" fill="none" stroke="#2c234a"/></pattern>
+</defs>
+<rect width="512" height="256" fill="none"/>
+<!-- floor tiles -->
+<g>
+ <rect x="0" y="0" width="32" height="32" fill="#292047"/><path d="M2 2H30V30H2Z" fill="none" stroke="#493267" stroke-width="2"/>
+ <rect x="32" y="0" width="32" height="32" fill="#30264f"/><path d="M34 4H60V28H34Z" fill="none" stroke="#554073"/><path d="M48 4V28" stroke="#44335f"/>
+ <rect x="64" y="0" width="32" height="32" fill="#233e31"/><path d="M67 6l4 -3 4 5 5 -4 5 7 5 -3 4 6" fill="none" stroke="#70b84c" stroke-width="2"/>
+ <rect x="96" y="0" width="32" height="32" fill="#493044"/><path d="M98 8H126M98 22H126" stroke="#a56a55" stroke-width="3"/>
+ <rect x="128" y="0" width="32" height="32" fill="#153d58"/><path d="M130 6L156 26M130 26L156 6" stroke="#37b8e9" stroke-width="2"/>
+ <rect x="160" y="0" width="32" height="32" fill="#43275b"/><path d="M176 4V28M164 16H188M167 7L185 25M185 7L167 25" stroke="#a14de0" stroke-width="2"/>
+</g>
+<!-- wall / machinery -->
+<g>
+ <g transform="translate(0 48)"><rect width="64" height="48" fill="#171329" stroke="#8b55b7" stroke-width="4"/><path d="M5 8H59V39H5Z" fill="url(#p)" stroke="#563777" stroke-width="3"/><path d="M12 15H52M12 22H52M12 29H52" stroke="#765095" stroke-width="3"/></g>
+ <g transform="translate(72 48)"><rect width="48" height="48" fill="#251b37" stroke="#9b62c9" stroke-width="4"/><rect x="8" y="8" width="32" height="32" fill="#371d52" stroke="#d04dff" stroke-width="3"/><path d="M16 16H32V32H16Z" fill="#8e38c5"/></g>
+ <g transform="translate(128 48)"><rect width="48" height="48" fill="#36223b" stroke="#bc804a" stroke-width="4"/><path d="M5 5L43 43M43 5L5 43" stroke="#9b6339" stroke-width="5"/><path d="M5 5H43V43H5Z" fill="none" stroke="#e0a15a" stroke-width="3"/></g>
+ <g transform="translate(184 48)"><rect width="48" height="48" fill="#18283c" stroke="#46b5d5" stroke-width="4"/><rect x="7" y="8" width="34" height="22" fill="#164d67" stroke="#65e7ff" stroke-width="3"/><path d="M12 14H35M12 20H28" stroke="#a3f4ff" stroke-width="2"/></g>
+</g>
+<!-- props -->
+<g>
+ <g transform="translate(256 0)"><path d="M16 30L3 17L16 3L29 17Z" fill="#b74dff" stroke="#f0baff" stroke-width="3"/><path d="M16 7V27" stroke="#fff" stroke-width="2"/><rect x="3" y="30" width="26" height="4" fill="#57377c"/></g>
+ <g transform="translate(304 0)"><rect x="5" y="8" width="26" height="24" fill="#5b2b78" stroke="#b875e8" stroke-width="3"/><path d="M9 12H27V25H9Z" fill="#8b42bd"/><path d="M18 8V32" stroke="#e5a6ff" stroke-width="2"/></g>
+ <g transform="translate(352 0)"><path d="M16 2L20 12L31 16L20 20L16 31L12 20L1 16L12 12Z" fill="#9bff55" stroke="#eaffbd" stroke-width="2"/></g>
+ <g transform="translate(400 0)"><path d="M16 2L29 8V20L16 32L3 20V8Z" fill="#36c8ff" stroke="#c5f6ff" stroke-width="3"/><path d="M16 7V26" stroke="#fff" stroke-width="2"/></g>
+</g>
+<!-- pickup icons -->
+<g transform="translate(0 112)">
+ <g><path d="M16 1L29 7V22L16 31L3 22V7Z" fill="#d94a58" stroke="#ffb1c0" stroke-width="3"/><path d="M16 8C9 1 4 11 16 20C28 11 23 1 16 8Z" fill="#fff"/></g>
+ <g transform="translate(48)"><path d="M16 1L29 7V22L16 31L3 22V7Z" fill="#328de0" stroke="#a8e6ff" stroke-width="3"/><path d="M16 5L10 17H16L13 26L23 13H17L20 5Z" fill="#fff"/></g>
+ <g transform="translate(96)"><path d="M16 1L29 7V22L16 31L3 22V7Z" fill="#d8a12f" stroke="#fff0a2" stroke-width="3"/><path d="M19 4L10 17H16L13 27L23 13H17Z" fill="#fff"/></g>
+ <g transform="translate(144)"><path d="M16 1L29 7V22L16 31L3 22V7Z" fill="#38c66a" stroke="#b8ffd0" stroke-width="3"/><path d="M14 6H18V13H25V17H18V25H14V17H7V13H14Z" fill="#fff"/></g>
+ <g transform="translate(192)"><circle cx="16" cy="16" r="13" fill="#9b3fe0" stroke="#e4aaff" stroke-width="3"/><path d="M16 6V26M6 16H26" stroke="#fff" stroke-width="2"/></g>
+ <g transform="translate(240)"><path d="M16 1L29 7V22L16 31L3 22V7Z" fill="#e2a43b" stroke="#ffe3a2" stroke-width="3"/><path d="M16 5L21 14H17L19 25L11 15H15Z" fill="#fff"/></g>
+</g>
+<!-- foliage / crystals -->
+<g transform="translate(0 168)">
+ <g><path d="M16 2L22 12L30 17L21 20L16 30L11 20L2 17L10 12Z" fill="#b84fff" stroke="#e6b1ff" stroke-width="3"/><path d="M16 5V27" stroke="#fff" stroke-width="2"/></g>
+ <g transform="translate(48)"><circle cx="16" cy="16" r="12" fill="#2c8c48" stroke="#8aff6b" stroke-width="3"/><circle cx="10" cy="10" r="5" fill="#63d55d"/></g>
+ <g transform="translate(96)"><path d="M16 30V8M16 20L5 11M16 23L27 12" stroke="#8adf60" stroke-width="4"/><path d="M4 11Q4 1 15 9Q15 18 4 11M17 10Q25 1 29 11Q25 20 17 10" fill="#4caa53"/></g>
+ <g transform="translate(144)"><rect x="4" y="5" width="24" height="23" fill="#6a3d2e" stroke="#d79a5b" stroke-width="3"/><path d="M4 5L28 28M28 5L4 28" stroke="#e3b77a" stroke-width="3"/></g>
+</g>
+<!-- character accessory icons -->
+<g transform="translate(256 112)">
+ <g><path d="M4 13Q16 -2 28 13L25 22H7Z" fill="#3c245c" stroke="#bb7bff" stroke-width="3"/><path d="M8 14H24" stroke="#f4cfff" stroke-width="3"/></g>
+ <g transform="translate(48)"><rect x="3" y="10" width="26" height="14" rx="5" fill="#17243c" stroke="#8cff55" stroke-width="3"/><circle cx="10" cy="17" r="4" fill="#6aff55"/><circle cx="22" cy="17" r="4" fill="#6aff55"/></g>
+ <g transform="translate(96)"><path d="M3 22Q16 0 29 22" fill="none" stroke="#b84fff" stroke-width="5"/><circle cx="16" cy="13" r="4" fill="#e6aaff"/></g>
+ <g transform="translate(144)"><path d="M16 1L20 11L31 16L20 21L16 31L12 21L1 16L12 11Z" fill="#e2b53c" stroke="#fff0a2" stroke-width="2"/></g>
+</g>
+</svg>
