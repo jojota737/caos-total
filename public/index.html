@@ -3,34 +3,40 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <meta name="theme-color" content="#101a2b">
   <title>Caos Total</title>
   <link rel="stylesheet" href="/style.css">
 </head>
 <body>
   <main id="lobby" class="panel">
-    <div class="eyebrow">PARTY ARENA • 2–5 JOGADORES</div>
+    <div class="eyebrow">⚡ PARTY ARENA • 2–5 JOGADORES</div>
     <h1>CAOS <span>TOTAL</span></h1>
-    <p>Entre na arena. Sobreviva ao caos.</p>
+    <p class="subtitle">Entre na arena. Sobreviva ao caos.</p>
+    <label for="name">SEU NOME</label>
     <input id="name" maxlength="16" placeholder="Seu apelido" value="Jogador">
-    <button id="create">CRIAR SALA</button>
+    <button id="create" class="primary">CRIAR SALA</button>
     <div class="join-row">
-      <input id="roomCode" maxlength="4" placeholder="CÓDIGO">
+      <input id="roomCode" maxlength="4" placeholder="CÓDIGO DA SALA" aria-label="Código da sala">
       <button id="join">ENTRAR</button>
     </div>
     <p id="status" role="status"></p>
     <section id="roomInfo" hidden>
-      <div>SALA <strong id="codeLabel"></strong></div>
+      <div class="room-heading">SALA <strong id="codeLabel"></strong></div>
       <ul id="players"></ul>
-      <button id="start">COMEÇAR PARTIDA</button>
+      <button id="start" class="primary">COMEÇAR PARTIDA</button>
       <small>É necessário ter pelo menos 2 jogadores.</small>
     </section>
+    <div class="lobby-decoration" aria-hidden="true"><span></span><span></span><span></span></div>
   </main>
   <main id="game" hidden>
-    <header><strong>CAOS TOTAL</strong><span id="gameCode"></span></header>
-    <canvas id="arena" width="900" height="600"></canvas>
+    <header><strong>CAOS <span>TOTAL</span></strong><span id="gameCode"></span></header>
+    <div class="arena-frame">
+      <canvas id="arena" width="900" height="600" aria-label="Arena de jogo"></canvas>
+    </div>
     <div class="mobile-controls">
-      <div id="joystick"><div id="stick"></div></div>
-      <button id="boost">IMPULSO ⚡</button>
+      <div class="control-hint">MOVA-SE</div>
+      <div id="joystick" aria-label="Controle de movimento"><div id="stick"></div></div>
+      <button id="boost">IMPULSO <b>⚡</b></button>
     </div>
   </main>
   <script src="/socket.io/socket.io.js"></script>
