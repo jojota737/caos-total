@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>Caos Total</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <main id="lobby" class="panel">
+    <div class="eyebrow">PARTY ARENA • 2–5 JOGADORES</div>
+    <h1>CAOS <span>TOTAL</span></h1>
+    <p>Entre na arena. Sobreviva ao caos.</p>
+    <input id="name" maxlength="16" placeholder="Seu apelido" value="Jogador">
+    <button id="create">CRIAR SALA</button>
+    <div class="join-row">
+      <input id="roomCode" maxlength="4" placeholder="CÓDIGO">
+      <button id="join">ENTRAR</button>
+    </div>
+    <p id="status" role="status"></p>
+    <section id="roomInfo" hidden>
+      <div>SALA <strong id="codeLabel"></strong></div>
+      <ul id="players"></ul>
+      <button id="start">COMEÇAR PARTIDA</button>
+      <small>É necessário ter pelo menos 2 jogadores.</small>
+    </section>
+  </main>
+  <main id="game" hidden>
+    <header><strong>CAOS TOTAL</strong><span id="gameCode"></span></header>
+    <canvas id="arena" width="900" height="600"></canvas>
+    <div class="mobile-controls">
+      <div id="joystick"><div id="stick"></div></div>
+      <button id="boost">IMPULSO ⚡</button>
+    </div>
+  </main>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/game.js"></script>
+</body>
+</html>
