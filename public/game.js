@@ -16,9 +16,55 @@ async function startGame(){if(!roomRef||!playersRef)return;try{const roomSnap=aw
 async function finishGame(winner,feed){if(!roomRef)return;try{clearInterval(hostTimer);hostTimer=null;await roomRef.set({started:false,phase:"results",endsAt:0,winner:winner?winner.name:null,feed:feed||"Fim da rodada."},{merge:true});if(winner)await playersRef.doc(winner.id).set({score:firebase.firestore.FieldValue.increment(1)},{merge:true});}catch(e){err("Erro ao finalizar: "+e.message)}}
 function hostLoop(){if(hostTimer)clearInterval(hostTimer);let last=Date.now();hostTimer=setInterval(async()=>{try{const snap=await roomRef.get();if(!snap.exists)return;const r=snap.data();if(!r.started||r.hostId!==myId){clearInterval(hostTimer);hostTimer=null;return}const now=Date.now(),dt=Math.min(.15,(now-last)/1000);last=now;const ps=await playersRef.get(),bs=await bulletsRef.get();let list=ps.docs.map(d=>publicPlayer(d.data()));bullets=bs.docs.map(d=>d.data());for(const p of list){if(!p.alive)continue;const len=Math.hypot(p.input.x,p.input.y)||1,speed=now<p.boostUntil?390:205;p.x=Math.max(22,Math.min(W-22,p.x+p.input.x/len*speed*dt));p.y=Math.max(22,Math.min(H-22,p.y+p.input.y/len*speed*dt))}const batch=db.batch();for(const doc of bs.docs){const b=doc.data();b.x+=b.vx*dt;b.y+=b.vy*dt;b.life-=dt;let hit=false;if(b.life>0&&b.x>=0&&b.x<=W&&b.y>=0&&b.y<=H){for(const p of list){if(p.id===b.owner||!p.alive||now<p.invulnerableUntil)continue;if(Math.hypot(p.x-b.x,p.y-b.y)<19){p.hp-=25;hit=true;if(p.hp<=0){p.hp=0;p.alive=false;const attacker=list.find(q=>q.id===b.owner);if(attacker){attacker.kos++;attacker.score++}}break}}}if(hit||b.life<=0||b.x<0||b.x>W||b.y<0||b.y>H)batch.delete(doc.ref);else batch.update(doc.ref,{x:b.x,y:b.y,life:b.life})}for(const p of list)batch.set(playersRef.doc(p.id),{x:p.x,y:p.y,hp:p.hp,alive:p.alive,score:p.score,kos:p.kos,boostUntil:p.boostUntil},{merge:true});await batch.commit();players=list;hud();draw();const alive=list.filter(p=>p.alive);if(now>=r.endsAt||alive.length<=1){const winner=alive.sort((x,y)=>y.hp-x.hp)[0]||null;await finishGame(winner,now>=r.endsAt?"Tempo esgotado!":"Todos os outros foram eliminados.")}}catch(e){err("Falha na partida: "+e.message)}},TICK)}
 function rr(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r)}
-function floor(){ctx.fillStyle="#263b4d";ctx.fillRect(0,0,W,H);for(let y=0;y<H;y+=60)for(let x=0;x<W;x+=60){ctx.fillStyle=((x/60+y/60)%2===0)?"#2b4254":"#30495b";ctx.fillRect(x+2,y+2,56,56);ctx.strokeStyle="#40596a";ctx.strokeRect(x+2,y+2,56,56)}[[35,35,210,105],[655,35,210,105],[35,455,210,105],[655,455,210,105],[330,35,240,42],[330,523,240,42]].forEach(([x,y,w,h])=>{ctx.fillStyle="#172b3b";rr(x,y,w,h,12);ctx.fill();ctx.strokeStyle="#7891a0";ctx.lineWidth=5;ctx.stroke()});[[95,190],[760,205],[95,350],[760,355],[405,95],[405,440]].forEach(([x,y],i)=>{ctx.fillStyle="#172b3c";rr(x,y,76,52,9);ctx.fill();ctx.strokeStyle="#6a8292";ctx.lineWidth=3;ctx.stroke();ctx.fillStyle=i%2?"#ffca68":"#78dff3";ctx.fillRect(x+12,y+12,12,5);ctx.fillStyle="#40596b";ctx.fillRect(x+31,y+12,32,27)})}
-function crew(p){const x=p.x,y=p.y;ctx.save();ctx.globalAlpha=p.alive?1:.25;ctx.fillStyle="#07121c88";ctx.beginPath();ctx.ellipse(x+2,y+13,21,9,0,0,Math.PI*2);ctx.fill();ctx.fillStyle="#0005";rr(x-19,y-12,13,29,7);ctx.fill();ctx.fillStyle=p.color||"#80eaff";rr(x-22,y-15,14,29,6);ctx.fill();const g=ctx.createLinearGradient(x-15,y-24,x+16,y+20);g.addColorStop(0,"#ffffff66");g.addColorStop(.28,p.color||"#80eaff");g.addColorStop(1,"#00000055");ctx.fillStyle=g;rr(x-15,y-24,32,46,14);ctx.fill();ctx.strokeStyle="#07152299";ctx.lineWidth=2;ctx.stroke();ctx.fillStyle="#9ceaff";rr(x-1,y-16,22,14,7);ctx.fill();ctx.font="bold 13px system-ui";ctx.textAlign="center";ctx.lineWidth=3;ctx.strokeStyle="#101b28";ctx.strokeText(p.name,x,y-33);ctx.fillStyle="#fff";ctx.fillText(p.name,x,y-33);if(p.alive){ctx.fillStyle="#101a2b";ctx.fillRect(x-17,y+27,36,4);ctx.fillStyle=p.hp>50?"#8bff65":p.hp>25?"#ffd36d":"#ff6b75";ctx.fillRect(x-17,y+27,36*p.hp/100,4)}ctx.restore()}
-function draw(){if(!ctx)return;ctx.clearRect(0,0,W,H);floor();bullets.forEach(b=>{ctx.fillStyle="#ffe28a";ctx.shadowColor="#ffca55";ctx.shadowBlur=12;ctx.beginPath();ctx.arc(b.x,b.y,5,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0});players.forEach(crew)}
+function floor(){
+ ctx.fillStyle="#160f27";ctx.fillRect(0,0,W,H);
+ for(let y=0;y<H;y+=32)for(let x=0;x<W;x+=32){
+  const n=(Math.floor(x/32)*7+Math.floor(y/32)*11)%6;
+  const base=["#292044","#30234c","#203c35","#392641","#202c49","#33264d"][n];
+  ctx.fillStyle=base;ctx.fillRect(x,y,31,31);
+  ctx.fillStyle=["#493267","#574078","#477044","#65415b","#394d70","#70418a"][n];ctx.fillRect(x,y,31,2);ctx.fillRect(x,y,2,31);
+  ctx.fillStyle="#100b1b";ctx.fillRect(x+4,y+4,2,2);ctx.fillRect(x+25,y+25,2,2);
+  if(n===2){ctx.fillStyle="#70b84c";ctx.fillRect(x+7,y+8,17,3);ctx.fillRect(x+12,y+17,11,3)}
+  if(n===3){ctx.fillStyle="#a56a55";ctx.fillRect(x+5,y+7,20,3);ctx.fillRect(x+5,y+21,20,3)}
+  if(n===4){ctx.fillStyle="#49b9e8";ctx.fillRect(x+14,y+7,3,18);ctx.fillRect(x+7,y+14,18,3)}
+ }
+ // industrial neon barricades and crates
+ [[28,30,208,86],[664,30,208,86],[28,484,208,86],[664,484,208,86],[346,28,208,42],[346,530,208,42]].forEach(([x,y,w,h])=>{ctx.fillStyle="#100b1c";ctx.fillRect(x,y,w,h);ctx.strokeStyle="#a64be0";ctx.lineWidth=5;ctx.strokeRect(x+2,y+2,w-4,h-4);ctx.strokeStyle="#493064";ctx.lineWidth=2;ctx.strokeRect(x+10,y+10,w-20,h-20)});
+ [[90,166],[720,166],[90,370],[720,370],[405,112],[405,430]].forEach(([x,y],i)=>{ctx.fillStyle=i%2?"#4b2c5d":"#252d54";ctx.fillRect(x,y,76,58);ctx.strokeStyle=i%2?"#d08b49":"#5ad9ff";ctx.lineWidth=4;ctx.strokeRect(x+3,y+3,70,52);ctx.strokeStyle="#171027";ctx.lineWidth=3;ctx.beginPath();ctx.moveTo(x+9,y+9);ctx.lineTo(x+67,y+49);ctx.moveTo(x+67,y+9);ctx.lineTo(x+9,y+49);ctx.stroke()});
+ // powers placed on the floor
+ [[278,130,"#ff526e","♥"],[620,310,"#54cfff","ϟ"],[270,455,"#a5ff4f","+"],[625,455,"#c36aff","✦"]].forEach(([x,y,c,s])=>{ctx.fillStyle=c+"33";ctx.beginPath();ctx.arc(x+16,y+16,23,0,Math.PI*2);ctx.fill();ctx.fillStyle="#160e25";ctx.fillRect(x+3,y+3,26,26);ctx.strokeStyle=c;ctx.lineWidth=3;ctx.strokeRect(x+3,y+3,26,26);ctx.fillStyle=c;ctx.font="bold 22px monospace";ctx.textAlign="center";ctx.fillText(s,x+16,y+24)});
+}
+function crew(p){
+ const x=Math.round(p.x),y=Math.round(p.y),c=p.color||"#8bff55";
+ ctx.save();ctx.globalAlpha=p.alive?1:.25;
+ // shadow and boots
+ ctx.fillStyle="#080611";ctx.fillRect(x-15,y+22,12,7);ctx.fillRect(x+4,y+22,12,7);
+ // legs and body silhouette
+ ctx.fillStyle="#11101e";ctx.fillRect(x-15,y+10,12,17);ctx.fillRect(x+4,y+10,12,17);
+ ctx.fillStyle=p.outfit==="armor"?"#59647c":p.outfit==="hoodie"?"#57328c":p.outfit==="red"?"#a8324b":c;
+ ctx.fillRect(x-18,y-8,36,24);ctx.fillRect(x-22,y-4,6,17);ctx.fillRect(x+16,y-4,6,17);
+ ctx.fillStyle="#ffffff33";ctx.fillRect(x-14,y-5,4,15);ctx.fillStyle="#080611";ctx.fillRect(x-18,y+13,36,4);
+ // neck and face
+ ctx.fillStyle="#d99a82";ctx.fillRect(x-7,y-15,14,9);
+ ctx.fillStyle="#f0c09c";ctx.fillRect(x-13,y-34,26,23);ctx.fillRect(x-17,y-29,4,13);ctx.fillRect(x+13,y-29,4,13);
+ // hair, hairstyle variants
+ ctx.fillStyle=p.hairColor||"#30204b";ctx.fillRect(x-15,y-38,30,8);ctx.fillRect(x-17,y-33,5,16);ctx.fillRect(x+12,y-33,5,13);ctx.fillRect(x-11,y-43,22,7);ctx.fillRect(x-6,y-38,7,5);
+ // eyes and visor
+ ctx.fillStyle="#171327";ctx.fillRect(x-8,y-24,4,4);ctx.fillRect(x+4,y-24,4,4);
+ ctx.fillStyle="#8df5ff";ctx.fillRect(x-10,y-23,3,2);ctx.fillRect(x+5,y-23,3,2);
+ ctx.fillStyle="#17243c";ctx.fillRect(x-12,y-17,24,5);ctx.fillStyle="#76f2ff";ctx.fillRect(x-9,y-16,7,2);ctx.fillRect(x+3,y-16,7,2);
+ // accessory options
+ if(p.accessory==="cat"){ctx.fillStyle=p.hairColor||"#30204b";ctx.fillRect(x-16,y-48,8,10);ctx.fillRect(x+8,y-48,8,10)}
+ else if(p.accessory==="crown"){ctx.fillStyle="#ffd34e";ctx.fillRect(x-11,y-49,22,5);ctx.fillRect(x-11,y-54,5,6);ctx.fillRect(x-3,y-57,6,9);ctx.fillRect(x+6,y-53,5,5)}
+ else if(p.accessory==="cap"){ctx.fillStyle="#25203c";ctx.fillRect(x-15,y-45,30,6);ctx.fillRect(x-18,y-40,36,3)}
+ else if(p.accessory==="visor"){ctx.fillStyle="#b9ff72";ctx.fillRect(x-14,y-25,28,5);ctx.fillStyle="#17243c";ctx.fillRect(x-11,y-24,8,3);ctx.fillRect(x+3,y-24,8,3)}
+ // clothing emblem and belt
+ ctx.fillStyle="#c5ff7a";ctx.fillRect(x-3,y-4,6,6);ctx.fillStyle="#171027";ctx.fillRect(x-15,y+8,30,3);
+ ctx.restore();
+ ctx.font="bold 13px system-ui";ctx.textAlign="center";ctx.lineWidth=3;ctx.strokeStyle="#090715";ctx.strokeText(p.name||"Jogador",x,y-63);ctx.fillStyle="#fff";ctx.fillText(p.name||"Jogador",x,y-63);
+ if(p.alive){ctx.fillStyle="#0a0917";ctx.fillRect(x-15,y+31,30,5);ctx.fillStyle=p.hp>50?"#8bff55":p.hp>25?"#ffc84b":"#ff536c";ctx.fillRect(x-14,y+32,28*Math.max(0,p.hp)/100,3)}
+}
+function draw(){if(!ctx)return;ctx.clearRect(0,0,W,H);floor();bullets.forEach(b=>{ctx.fillStyle="#fff3a5";ctx.shadowColor="#ffb84b";ctx.shadowBlur=12;ctx.fillRect(Math.round(b.x)-4,Math.round(b.y)-4,8,8);ctx.shadowBlur=0});players.forEach(crew)}
 function hud(){const p=me();$("healthFill").style.width=(p?.hp??100)+"%";$("phase").textContent=p&&!p.alive?"ELIMINADO":"BATALHA";$("scores").replaceChildren();[...players].sort((a,b)=>b.score-a.score||b.kos-a.kos).forEach(p=>{const li=document.createElement("li");li.textContent=p.name+": "+p.score+" pts · "+p.kos+" KOs";$("scores").append(li)})}
 function setAxis(x,y){axis={x,y};updateMy({input:axis})}
 const joy=$("joystick"),stick=$("stick");function joyMove(e){const r=joy.getBoundingClientRect();let dx=e.clientX-r.left-r.width/2,dy=e.clientY-r.top-r.height/2,max=34,len=Math.hypot(dx,dy)||1;if(len>max){dx=dx/len*max;dy=dy/len*max}stick.style.transform="translate("+dx+"px,"+dy+"px)";setAxis(dx/max,dy/max)}
